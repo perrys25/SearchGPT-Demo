@@ -14,10 +14,10 @@ const SearchGPT: NextPage = () => {
     const [dark, setDark] = useState<boolean | undefined>(undefined)
     const [input, setInput] = useState<string>("");
     const [apiKey, setApiKey] = useState<string | undefined>(undefined);
-    const {sendMessage, lastMessage, readyState} = useWebSocket("wss://searchgpt.perrysahnow.com", {
+    const {sendMessage, lastMessage, readyState} = useWebSocket("wss://api.searchgpt.perrysahnow.com", {
         shouldReconnect: () => false,
     });
-    const [messages, setMessages] = useState<{ "type": "user" | "assistant" | "error" | "Search", "message": string }[]>([
+    const [messages, setMessages] = useState<({ "type": "user" | "assistant" | "error" | "search", "message": string })[]>([
         // {"type": "Search", "message": "Test Message"},
         // {"type": "error", "message": "Test Message"},
         // {"type": "assistant", "message": "Test Message"},
@@ -69,6 +69,8 @@ const SearchGPT: NextPage = () => {
                 setMessages([{"type": "assistant", "message": data.message}, ...messages]);
             } else if (data.type === "error") {
                 setMessages([{"type": "error", "message": data.error}, ...messages]);
+            } else if (data.type === "Search") {
+                setMessages([{"type": "search", "message": data.search}, ...messages]);
             }
         }
     }, [lastMessage]);
@@ -178,7 +180,7 @@ const SearchGPT: NextPage = () => {
 
 const ChatBubble: ({text, type}: { text: string, type: string }) => JSX.Element = ({text, type}) => {
     switch (type) {
-        case "Search":
+        case "search":
             return (
                 <div css={tw`flex flex-row gap-4 justify-start`}>
                     <div
