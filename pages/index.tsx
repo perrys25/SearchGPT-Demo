@@ -51,7 +51,9 @@ const SearchGPT: NextPage = () => {
         <div css={tw`w-screen h-screen p-8  md:p-20 lg:px-36`}>
             <div css={tw`bg-sky-200 w-full h-full flex flex-col rounded-xl p-2`}>
                 <div css={tw`text-5xl p-4 mx-auto font-sans font-medium`}>SearchGPT ({connectionStatus})</div>
-                <div css={tw`text-xl pb-4 mx-auto font-sans`}>Note: SearchGPT can cost a lot if used in excess. Please be careful.</div>
+                <div css={tw`text-xl pb-4 mx-auto font-sans`}>Note: SearchGPT can cost a lot if used in excess. Please
+                    be careful.
+                </div>
                 <div css={tw`w-full px-8 flex flex-row gap-4 pb-2`}>
                     <span css={tw`my-auto`}>OpenAI Api Key: </span>
                     <input css={tw`h-8 rounded-full flex-grow flex-shrink focus:outline-none px-4`} value={apiKey}
@@ -76,7 +78,9 @@ const SearchGPT: NextPage = () => {
                             }
                         }
                     }}>
-                        <FontAwesomeIcon icon={faPaperPlane} size={"2x"} css={tw`text-black p-1`}/>
+                        <span css={tw`text-black p-1`}>
+                            <FontAwesomeIcon icon={faPaperPlane} size={"2x"}/>
+                        </span>
                     </div>
                 </div>
             </div>
