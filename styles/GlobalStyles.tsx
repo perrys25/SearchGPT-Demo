@@ -1,6 +1,6 @@
 import React from 'react'
-import { createGlobalStyle } from 'styled-components'
-import tw, { GlobalStyles as BaseStyles } from 'twin.macro'
+import {createGlobalStyle, css} from 'styled-components'
+import tw, {GlobalStyles as BaseStyles} from 'twin.macro'
 
 const CustomStyles = createGlobalStyle({
     body: {
@@ -11,8 +11,8 @@ const CustomStyles = createGlobalStyle({
 
 const GlobalStyles = () => (
     <>
-        <BaseStyles />
-        <CustomStyles />
+        <BaseStyles/>
+        <CustomStyles/>
     </>
 )
 
