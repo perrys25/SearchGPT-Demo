@@ -1,6 +1,6 @@
 import type {NextPage} from 'next'
 import tw from "twin.macro";
-import React, {Component, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import TextareaAutosize from 'react-textarea-autosize';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
@@ -33,6 +33,7 @@ const SearchGPT: NextPage = () => {
         const apiKey = localStorage.getItem("apiKey");
         if (apiKey !== null) {
             setApiKey(apiKey);
+            sendMessage(JSON.stringify({"type": "apikey", "apikey": apiKey}))
         } else {
             setApiKey("")
         }
