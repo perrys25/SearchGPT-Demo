@@ -14,7 +14,7 @@ const SearchGPT: NextPage = () => {
     const [dark, setDark] = useState<boolean | undefined>(undefined)
     const [input, setInput] = useState<string>("");
     const [apiKey, setApiKey] = useState<string | undefined>(undefined);
-    const {sendMessage, lastMessage, readyState} = useWebSocket("wss://api.searchgpt.perrysahnow.com", {
+    const {sendMessage, lastMessage, readyState} = useWebSocket("wss://searchgptapi.perrysahnow.com", {
         shouldReconnect: () => false,
     });
     const [messages, setMessages] = useState<({ "type": "user" | "assistant" | "error" | "search", "message": string })[]>([
