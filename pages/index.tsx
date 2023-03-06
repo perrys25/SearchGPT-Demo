@@ -8,6 +8,7 @@ import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
 import {css} from "styled-components";
 import Head from "next/head";
+import Loading from "../components/loading";
 
 const SearchGPT: NextPage = () => {
 
@@ -15,6 +16,7 @@ const SearchGPT: NextPage = () => {
     const [dark, setDark] = useState<boolean | undefined>(undefined)
     const [input, setInput] = useState<string>("");
     const [apiKey, setApiKey] = useState<string | undefined>(undefined);
+    const [loading, setLoading] = useState(false);
     const {sendMessage, lastMessage, readyState} = useWebSocket("wss://searchgptapi.perrysahnow.com", {
         shouldReconnect: () => false,
     });
@@ -24,6 +26,20 @@ const SearchGPT: NextPage = () => {
         // {"type": "assistant", "message": "Test Message"},
         // {"type": "user", "message": "Test Message"},
     ]);
+
+    const sendInput = () => {
+        if (input !== "") {
+            setMessages([{"type": "user", "message": input}, ...messages]);
+            setLoading(true)
+            setInput("");
+            if (connectionStatus === "Open") {
+                sendMessage(JSON.stringify({
+                    "type": "question",
+                    "question": input
+                }))
+            }
+        }
+    }
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -68,8 +84,10 @@ const SearchGPT: NextPage = () => {
             const data = JSON.parse(lastMessage.data);
             if (data.type === "message") {
                 setMessages([{"type": "assistant", "message": data.message}, ...messages]);
+                setLoading(false)
             } else if (data.type === "error") {
                 setMessages([{"type": "error", "message": data.error}, ...messages]);
+                setLoading(false)
             } else if (data.type === "Search") {
                 setMessages([{"type": "search", "message": data.search}, ...messages]);
             }
@@ -111,39 +129,28 @@ const SearchGPT: NextPage = () => {
                         })}
                     </div>
                     <div css={tw`w-full flex flex-row rounded-b-lg p-2 gap-2`}>
-                        <TextareaAutosize maxRows={8} minRows={1} value={input} onChange={v => setInput(v.target.value)}
-                                          placeholder={"Ask me a question..."}
-                                          css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
-                                          onKeyDown={event => {
-                                              const key = event.key
-                                              if (key === "Shift") setShift(true)
-                                              if (!shift && key === "Enter") {
-                                                  event.preventDefault()
-                                                  if (input !== "") {
-                                                      setMessages([{"type": "user", "message": input}, ...messages]);
-                                                      setInput("");
-                                                      if (connectionStatus === "Open") {
-                                                          sendMessage(JSON.stringify({
-                                                              "type": "question",
-                                                              "question": input
-                                                          }))
-                                                      }
+                        {loading ? (
+                            <div css={tw`rounded-lg w-full h-10 focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}>
+                                <Loading />
+                            </div>
+                        ) : <TextareaAutosize maxRows={8} minRows={1} value={input} onChange={v => setInput(v.target.value)}
+                                              placeholder={"Ask me a question..."}
+                                              css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
+                                              onKeyDown={event => {
+                                                  const key = event.key
+                                                  if (key === "Shift") setShift(true)
+                                                  if (!shift && key === "Enter") {
+                                                      event.preventDefault()
+                                                      sendInput()
                                                   }
-                                              }
-                                          }}
-                                          onKeyUp={event => {
-                                              const key = event.key
-                                              if (key === "Shift") setShift(false)
-                                          }}
-                        />
+                                              }}
+                                              onKeyUp={event => {
+                                                  const key = event.key
+                                                  if (key === "Shift") setShift(false)
+                                              }}
+                        />}
                         <div css={tw`mt-auto`} onClick={() => {
-                            if (input !== "") {
-                                setMessages([{"type": "user", "message": input}, ...messages]);
-                                setInput("");
-                                if (connectionStatus === "Open") {
-                                    sendMessage(JSON.stringify({"type": "question", "question": input}))
-                                }
-                            }
+                            sendInput()
                         }}>
                             <div css={tw`mb-2`}>
                             <span
