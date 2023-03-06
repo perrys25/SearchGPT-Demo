@@ -7,6 +7,7 @@ import {faMagnifyingGlass, faMoon, faPaperPlane, faRotate, faSun} from "@fortawe
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
 import {css} from "styled-components";
+import Head from "next/head";
 
 const SearchGPT: NextPage = () => {
 
@@ -76,105 +77,111 @@ const SearchGPT: NextPage = () => {
     }, [lastMessage]);
 
     return (
-        <div css={tw`w-screen h-screen p-3 sm:p-8  md:p-20 lg:px-36 bg-white dark:bg-slate-800`}>
-            <div
-                css={tw`bg-sky-100 dark:bg-slate-700 shadow-lg w-full h-full flex flex-col rounded-xl p-2 text-black dark:text-white`}>
-                <div css={tw`text-5xl p-4 mx-auto font-sans font-medium flex flex-row`}>SearchGPT</div>
-                <div css={tw`flex flex-row text-lg justify-center gap-2`}>
-                    {"Status: "}
-                    <div
-                        css={{...tw`p-3 w-min h-min my-auto rounded-full shadow-sm`, ...(connectionStatus === "Open" ? tw`bg-green-400` : connectionStatus === "Connecting" ? tw`bg-orange-400` : tw`bg-red-400`)}}/>
-                </div>
-                <div css={tw`text-xl pt-2 pb-4 mx-auto font-sans`}>Please note that SearchGPT will cost a lot if used in
-                    excess.
-                </div>
-                <div css={tw`w-full px-8 flex flex-row gap-1 sm:gap-2 md:gap-4 pb-2 justify-center`}>
-                    <span css={tw`my-auto`}>OpenAI Api Key: </span>
-                    <input css={css`
-                      max-width: 30rem;
-                      ${tw`h-8 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600`}
-                    `} value={apiKey}
-                           onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
-                </div>
+        <>
+            <Head>
+                <title>SearchGPT</title>
+            </Head>
+            <div css={tw`w-screen h-screen p-3 sm:p-8  md:p-20 lg:px-36 bg-white dark:bg-slate-800`}>
                 <div
-                    css={tw`w-full h-full flex flex-col rounded-t-lg gap-4 p-4 flex-col-reverse overflow-scroll`}>
-                    {messages.map((message, index) => {
-                        return (
-                            <ChatBubble key={messages.length - index} text={message.message} type={message.type}/>
-                        )
-                    })}
-                </div>
-                <div css={tw`w-full flex flex-row rounded-b-lg p-2 gap-2`}>
-                    <TextareaAutosize maxRows={8} minRows={1} value={input} onChange={v => setInput(v.target.value)}
-                                      placeholder={"Ask me a question..."}
-                                      css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
-                                      onKeyDown={event => {
-                                          const key = event.key
-                                          if (key === "Shift") setShift(true)
-                                          if (!shift && key === "Enter") {
-                                              event.preventDefault()
-                                              if (input !== "") {
-                                                  setMessages([{"type": "user", "message": input}, ...messages]);
-                                                  setInput("");
-                                                  if (connectionStatus === "Open") {
-                                                      sendMessage(JSON.stringify({
-                                                          "type": "question",
-                                                          "question": input
-                                                      }))
+                    css={tw`bg-sky-100 dark:bg-slate-700 shadow-lg w-full h-full flex flex-col rounded-xl p-2 text-black dark:text-white`}>
+                    <div css={tw`text-5xl p-4 mx-auto font-sans font-medium flex flex-row`}>SearchGPT</div>
+                    <div css={tw`flex flex-row text-lg justify-center gap-2`}>
+                        {"Status: "}
+                        <div
+                            css={{...tw`p-3 w-min h-min my-auto rounded-full shadow-sm`, ...(connectionStatus === "Open" ? tw`bg-green-400` : connectionStatus === "Connecting" ? tw`bg-orange-400` : tw`bg-red-400`)}}/>
+                    </div>
+                    <div css={tw`text-xl pt-2 pb-4 mx-auto font-sans`}>Please note that SearchGPT will cost a lot if
+                        used in
+                        excess.
+                    </div>
+                    <div css={tw`w-full px-8 flex flex-row gap-1 sm:gap-2 md:gap-4 pb-2 justify-center`}>
+                        <span css={tw`my-auto`}>OpenAI Api Key: </span>
+                        <input css={css`
+                          max-width: 30rem;
+                          ${tw`h-8 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600`}
+                        `} value={apiKey}
+                               onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
+                    </div>
+                    <div
+                        css={tw`w-full h-full flex flex-col rounded-t-lg gap-4 p-4 flex-col-reverse overflow-auto`}>
+                        {messages.map((message, index) => {
+                            return (
+                                <ChatBubble key={messages.length - index} text={message.message} type={message.type}/>
+                            )
+                        })}
+                    </div>
+                    <div css={tw`w-full flex flex-row rounded-b-lg p-2 gap-2`}>
+                        <TextareaAutosize maxRows={8} minRows={1} value={input} onChange={v => setInput(v.target.value)}
+                                          placeholder={"Ask me a question..."}
+                                          css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
+                                          onKeyDown={event => {
+                                              const key = event.key
+                                              if (key === "Shift") setShift(true)
+                                              if (!shift && key === "Enter") {
+                                                  event.preventDefault()
+                                                  if (input !== "") {
+                                                      setMessages([{"type": "user", "message": input}, ...messages]);
+                                                      setInput("");
+                                                      if (connectionStatus === "Open") {
+                                                          sendMessage(JSON.stringify({
+                                                              "type": "question",
+                                                              "question": input
+                                                          }))
+                                                      }
                                                   }
                                               }
-                                          }
-                                      }}
-                                      onKeyUp={event => {
-                                          const key = event.key
-                                          if (key === "Shift") setShift(false)
-                                      }}
-                    />
-                    <div css={tw`mt-auto`} onClick={() => {
-                        if (input !== "") {
-                            setMessages([{"type": "user", "message": input}, ...messages]);
-                            setInput("");
-                            if (connectionStatus === "Open") {
-                                sendMessage(JSON.stringify({"type": "question", "question": input}))
+                                          }}
+                                          onKeyUp={event => {
+                                              const key = event.key
+                                              if (key === "Shift") setShift(false)
+                                          }}
+                        />
+                        <div css={tw`mt-auto`} onClick={() => {
+                            if (input !== "") {
+                                setMessages([{"type": "user", "message": input}, ...messages]);
+                                setInput("");
+                                if (connectionStatus === "Open") {
+                                    sendMessage(JSON.stringify({"type": "question", "question": input}))
+                                }
                             }
-                        }
-                    }}>
-                        <div css={tw`mb-2`}>
+                        }}>
+                            <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
                                 <div css={tw`m-auto`}>
                                     <FontAwesomeIcon icon={faPaperPlane} size={"lg"}/>
                                 </div>
                             </span>
+                            </div>
                         </div>
-                    </div>
-                    <div css={tw`mt-auto`} onClick={() => {
-                        window.location.reload()
-                    }}>
-                        <div css={tw`mb-2`}>
+                        <div css={tw`mt-auto`} onClick={() => {
+                            window.location.reload()
+                        }}>
+                            <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
                                 <div css={tw`m-auto`}>
                                     <FontAwesomeIcon icon={faRotate} size={"lg"}/>
                                 </div>
                             </span>
+                            </div>
                         </div>
-                    </div>
-                    <div css={tw`mt-auto`} onClick={() => {
-                        setDark(!dark)
-                    }}>
-                        <div css={tw`mb-2`}>
+                        <div css={tw`mt-auto`} onClick={() => {
+                            setDark(!dark)
+                        }}>
+                            <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
                                 <div css={tw`m-auto`}>
                                     <FontAwesomeIcon icon={dark ? faMoon : faSun} size={"lg"}/>
                                 </div>
                             </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
