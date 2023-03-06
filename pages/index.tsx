@@ -148,7 +148,7 @@ const SearchGPT: NextPage = () => {
                             <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div css={tw`m-auto`}>
+                                <div>
                                     <FontAwesomeIcon icon={faPaperPlane} size={"lg"}/>
                                 </div>
                             </span>
@@ -160,7 +160,7 @@ const SearchGPT: NextPage = () => {
                             <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div css={tw`m-auto`}>
+                                <div>
                                     <FontAwesomeIcon icon={faRotate} size={"lg"}/>
                                 </div>
                             </span>
@@ -172,7 +172,7 @@ const SearchGPT: NextPage = () => {
                             <div css={tw`mb-2`}>
                             <span
                                 css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div css={tw`m-auto`}>
+                                <div>
                                     <FontAwesomeIcon icon={dark ? faMoon : faSun} size={"lg"}/>
                                 </div>
                             </span>
