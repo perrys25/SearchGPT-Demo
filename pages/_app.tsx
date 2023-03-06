@@ -13,6 +13,7 @@ function MyApp({Component, pageProps}: AppProps) {
                 <meta name="theme-color" content="#1E293B"/>
                 <meta property="og:url" content="https://searchgpt.perrysahnow.com/"/>
                 <link rel="manifest" href="/manifest.json" />
+                <link rel="shortcut icon" href="/images/icons/icon-512x512.png" />
             </Head>
             <GlobalStyles/>
             <Component {...pageProps} />
