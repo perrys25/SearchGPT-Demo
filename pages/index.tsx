@@ -3,10 +3,17 @@ import tw from "twin.macro";
 import React, {useEffect, useState} from "react";
 import TextareaAutosize from 'react-textarea-autosize';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass, faMoon, faPaperPlane, faRotate, faSun} from "@fortawesome/free-solid-svg-icons";
+import {
+    faMagnifyingGlass,
+    faMoon,
+    faPaperPlane,
+    faRotate,
+    faSun,
+    IconDefinition
+} from "@fortawesome/free-solid-svg-icons";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
-import {css} from "styled-components";
+import {css, keyframes} from "styled-components";
 import Head from "next/head";
 import Loading from "../components/loading";
 
@@ -128,12 +135,14 @@ const SearchGPT: NextPage = () => {
                             )
                         })}
                     </div>
-                    <div css={tw`w-full flex flex-row rounded-b-lg p-2 gap-2`}>
+                    <div css={tw`w-full flex flex-row rounded-b-lg p-2`}>
                         {loading ? (
-                            <div css={tw`rounded-lg w-full h-10 focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}>
-                                <Loading />
+                            <div
+                                css={tw`rounded-lg w-full h-10 focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}>
+                                <Loading/>
                             </div>
-                        ) : <TextareaAutosize maxRows={8} minRows={1} value={input} onChange={v => setInput(v.target.value)}
+                        ) : <TextareaAutosize maxRows={8} minRows={1} value={input}
+                                              onChange={v => setInput(v.target.value)}
                                               placeholder={"Ask me a question..."}
                                               css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
                                               onKeyDown={event => {
@@ -152,43 +161,36 @@ const SearchGPT: NextPage = () => {
                         <div css={tw`mt-auto`} onClick={() => {
                             sendInput()
                         }}>
-                            <div css={tw`mb-2`}>
-                            <span
-                                css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div>
-                                    <FontAwesomeIcon icon={faPaperPlane} size={"lg"}/>
-                                </div>
-                            </span>
-                            </div>
+                            <FaIcon icon={faPaperPlane} show={true}/>
                         </div>
                         <div css={tw`mt-auto`} onClick={() => {
                             window.location.reload()
                         }}>
-                            <div css={tw`mb-2`}>
-                            <span
-                                css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div>
-                                    <FontAwesomeIcon icon={faRotate} size={"lg"}/>
-                                </div>
-                            </span>
-                            </div>
+                            <FaIcon icon={faRotate} show={input === ""}/>
                         </div>
                         <div css={tw`mt-auto`} onClick={() => {
                             setDark(!dark)
                         }}>
-                            <div css={tw`mb-2`}>
-                            <span
-                                css={tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center`}>
-                                <div>
-                                    <FontAwesomeIcon icon={dark ? faMoon : faSun} size={"lg"}/>
-                                </div>
-                            </span>
-                            </div>
+                            <FaIcon icon={dark ? faMoon : faSun} show={input === ""}/>
                         </div>
                     </div>
                 </div>
             </div>
         </>
+    )
+}
+
+const FaIcon = ({icon, show}: { icon: IconDefinition, show: boolean }) => {
+    return (
+        <span
+            css={css`
+              ${tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center ml-2`}
+              ${!show && tw`w-0 h-0 ml-0 p-0 sm:w-10 sm:h-10 sm:ml-2 sm:p-2.5`}
+            `}>
+               <div>
+                  <FontAwesomeIcon icon={icon} size={"lg"}/>
+                </div>
+            </span>
     )
 }
 
