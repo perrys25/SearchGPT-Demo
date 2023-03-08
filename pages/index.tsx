@@ -9,7 +9,9 @@ import {
     faPaperPlane,
     faRotate,
     faSun,
-    IconDefinition
+    IconDefinition,
+    faEye,
+    faEyeSlash
 } from "@fortawesome/free-solid-svg-icons";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
@@ -33,6 +35,7 @@ const SearchGPT: NextPage = () => {
         // {"type": "assistant", "message": "Test Message"},
         // {"type": "user", "message": "Test Message"},
     ]);
+    const [showApiKey, setShowApiKey] = useState(false);
 
     const sendInput = () => {
         if (input !== "") {
@@ -115,17 +118,20 @@ const SearchGPT: NextPage = () => {
                         <div
                             css={{...tw`p-3 w-min h-min my-auto rounded-full shadow-sm`, ...(connectionStatus === "Open" ? tw`bg-green-400` : connectionStatus === "Connecting" ? tw`bg-orange-400` : tw`bg-red-400`)}}/>
                     </div>
-                    <div css={tw`text-xl pt-2 pb-4 mx-auto font-sans`}>Please note that SearchGPT will cost a lot if
-                        used in
-                        excess.
-                    </div>
-                    <div css={tw`w-full px-8 flex flex-row gap-1 sm:gap-2 md:gap-4 pb-2 justify-center`}>
-                        <span css={tw`my-auto`}>OpenAI Api Key: </span>
-                        <input css={css`
-                          max-width: 30rem;
-                          ${tw`h-8 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600`}
+                    <div css={tw`w-full sm:px-4 md:px-8 flex flex-row pb-2 justify-center sm:mt-3`}>
+                        <div css={tw`flex flex-col sm:flex-row`}>
+                        <span css={tw`my-auto mx-auto my-2 sm:mb-0 sm:mt-1`}>OpenAI Api Key: </span>
+                        <div css={tw`flex flex-row`}>
+                            <input type={showApiKey ? "text" : "password"} css={css`
+                          max-width: 35rem;
+                          ${tw`h-10 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600 ml-1 sm:ml-2 md:ml-4`}
                         `} value={apiKey}
-                               onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
+                                   onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
+                            <div  onClick={() => setShowApiKey(!showApiKey)}>
+                                {showApiKey ? <FaIcon icon={faEyeSlash} show/> : <FaIcon icon={faEye} show/>}
+                            </div>
+                        </div>
+                        </div>
                     </div>
                     {
                         (connectionStatus === "Open" || connectionStatus === "Connecting") ? (
@@ -141,7 +147,7 @@ const SearchGPT: NextPage = () => {
                             <div
                                 css={tw`w-full h-full flex flex-col rounded-lg py-4 px-12 flex-col-reverse overflow-auto`}>
                                 <div
-                                    css={tw`w-full h-full flex flex-col rounded-lg flex-col-reverse overflow-auto bg-gray-200 dark:bg-slate-800 p-8`}>
+                                    css={tw`w-full h-full flex flex-col rounded-lg flex-col-reverse overflow-auto bg-sky-50 dark:bg-slate-800 p-8`}>
                                     <span css={tw`mx-auto my-auto text-lg`}>
                                         Error: SearchGPT is Currently Unable To Connect
                                     </span>
