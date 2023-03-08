@@ -127,14 +127,28 @@ const SearchGPT: NextPage = () => {
                         `} value={apiKey}
                                onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
                     </div>
-                    <div
-                        css={tw`w-full h-full flex flex-col rounded-t-lg gap-4 p-4 flex-col-reverse overflow-auto`}>
-                        {messages.map((message, index) => {
-                            return (
-                                <ChatBubble key={messages.length - index} text={message.message} type={message.type}/>
-                            )
-                        })}
-                    </div>
+                    {
+                        (connectionStatus === "Open" || connectionStatus === "Connecting") ? (
+                            <div
+                                css={tw`w-full h-full flex flex-col rounded-t-lg gap-4 p-4 flex-col-reverse overflow-auto`}>
+                                {messages.map((message, index) => {
+                                    return (
+                                        <ChatBubble key={messages.length - index} text={message.message}
+                                                    type={message.type}/>
+                                    )
+                                })}
+                            </div>) : (
+                            <div
+                                css={tw`w-full h-full flex flex-col rounded-lg py-4 px-12 flex-col-reverse overflow-auto`}>
+                                <div
+                                    css={tw`w-full h-full flex flex-col rounded-lg flex-col-reverse overflow-auto bg-gray-200 dark:bg-slate-800 p-8`}>
+                                    <span css={tw`mx-auto my-auto text-lg`}>
+                                        Error: SearchGPT is Currently Unable To Connect
+                                    </span>
+                                </div>
+                            </div>
+                        )
+                    }
                     <div css={tw`w-full flex flex-row rounded-b-lg p-2`}>
                         {loading ? (
                             <div
@@ -142,8 +156,11 @@ const SearchGPT: NextPage = () => {
                                 <Loading/>
                             </div>
                         ) : <TextareaAutosize maxRows={8} minRows={1} value={input}
-                                              onChange={v => setInput(v.target.value)}
-                                              placeholder={"Ask me a question..."}
+                                              onChange={v => {
+                                                  setInput(v.target.value)
+                                              }}
+                                              readOnly={connectionStatus !== "Open"}
+                                              placeholder={connectionStatus === "Open" ? "Ask me a question..." : "Not connected. Try reloading, or check your internet connection."}
                                               css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
                                               onKeyDown={event => {
                                                   const key = event.key
@@ -187,10 +204,10 @@ const FaIcon = ({icon, show}: { icon: IconDefinition, show: boolean }) => {
               ${tw`bg-white dark:bg-slate-600 rounded-full p-2.5 shadow-md hover:cursor-pointer inline-block w-10 h-10 flex flex-col justify-center ml-2`}
               ${!show && tw`w-0 h-0 ml-0 p-0 sm:w-10 sm:h-10 sm:ml-2 sm:p-2.5`}
             `}>
-               <div>
-                  <FontAwesomeIcon icon={icon} size={"lg"}/>
-                </div>
-            </span>
+                            <div>
+                            <FontAwesomeIcon icon={icon} size={"lg"}/>
+                            </div>
+                            </span>
     )
 }
 
@@ -202,13 +219,13 @@ const ChatBubble: ({text, type}: { text: string, type: string }) => JSX.Element 
                     <div
                         css={tw`p-2 inline-block max-w-sm sm:max-w-md lg:max-w-xl xl:max-w-5xl`}>
                         <div css={tw`break-words flex flex-row gap-2`}>
-                    <span css={tw`my-auto`}>
-                        <FontAwesomeIcon icon={faMagnifyingGlass}/>
-                    </span>
+                            <span css={tw`my-auto`}>
+                            <FontAwesomeIcon icon={faMagnifyingGlass}/>
+                            </span>
                             <Twemoji options={{"size": "1.5rem"}}>
-                        <span css={tw`font-bold whitespace-pre break-words`}>
-                            {"Searching Google For: "}
-                        </span>
+                            <span css={tw`font-bold whitespace-pre break-words`}>
+                        {"Searching Google For: "}
+                            </span>
                                 {text}
                             </Twemoji>
                         </div>
