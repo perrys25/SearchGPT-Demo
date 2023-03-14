@@ -11,13 +11,14 @@ import {
     faSun,
     IconDefinition,
     faEye,
-    faEyeSlash
+    faEyeSlash, faExternalLink
 } from "@fortawesome/free-solid-svg-icons";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
 import {css, keyframes} from "styled-components";
 import Head from "next/head";
 import Loading from "../components/loading";
+import Link from "next/link";
 
 const SearchGPT: NextPage = () => {
 
@@ -109,28 +110,31 @@ const SearchGPT: NextPage = () => {
             <Head>
                 <title>SearchGPT</title>
             </Head>
-            <div css={tw`w-screen h-screen p-3 sm:p-8  md:p-20 lg:px-36 bg-white dark:bg-slate-800`}>
+            <div css={tw`w-screen h-screen p-3 sm:p-8  md:p-20 bg-white dark:bg-slate-800`}>
                 <div
                     css={tw`bg-sky-100 dark:bg-slate-700 shadow-lg w-full h-full flex flex-col rounded-xl p-2 text-black dark:text-white`}>
-                    <div css={tw`text-5xl p-4 mx-auto font-sans font-medium flex flex-row`}>SearchGPT</div>
+                    <div css={tw`text-4xl sm:text-5xl p-4 mx-auto font-sans font-medium flex flex-row`}>SearchGPT <Link
+                        css={tw`mt-auto`} href={"https://github.com/perrys25/SearchGPT"}>
+                        <FaIcon icon={faExternalLink} show/>
+                    </Link></div>
                     <div css={tw`flex flex-row text-lg justify-center gap-2`}>
                         {"Status: "}
                         <div
                             css={{...tw`p-3 w-min h-min my-auto rounded-full shadow-sm`, ...(connectionStatus === "Open" ? tw`bg-green-400` : connectionStatus === "Connecting" ? tw`bg-orange-400` : tw`bg-red-400`)}}/>
                     </div>
                     <div css={tw`w-full sm:px-4 md:px-8 flex flex-row pb-2 justify-center sm:mt-3`}>
-                        <div css={tw`flex flex-col sm:flex-row`}>
-                        <span css={tw`my-auto mx-auto my-2 sm:mb-0 sm:mt-1`}>OpenAI Api Key: </span>
-                        <div css={tw`flex flex-row`}>
-                            <input type={showApiKey ? "text" : "password"} css={css`
-                          max-width: 35rem;
-                          ${tw`h-10 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600 ml-1 sm:ml-2 md:ml-4`}
-                        `} value={apiKey}
-                                   onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
-                            <div  onClick={() => setShowApiKey(!showApiKey)}>
-                                {showApiKey ? <FaIcon icon={faEyeSlash} show/> : <FaIcon icon={faEye} show/>}
+                        <div css={css`
+                          max-width: 44rem;
+                          ${tw`flex flex-col sm:flex-row flex-grow flex-shrink`}
+                        `}>
+                            <span css={tw`my-auto mx-auto my-2 sm:mb-0 sm:mt-1 min-w-max`}>OpenAI Api Key: </span>
+                            <div css={tw`flex flex-row w-full`}>
+                                <input type={showApiKey ? "text" : "password"} css={tw`h-10 rounded-full flex-grow flex-shrink focus:outline-none px-4 shadow-md min-w-0 bg-white dark:bg-slate-600 ml-1 sm:ml-2 md:ml-4`} value={apiKey}
+                                       onChange={v => setApiKey(v.target.value)} placeholder={"sk-..."}/>
+                                <div onClick={() => setShowApiKey(!showApiKey)}>
+                                    {showApiKey ? <FaIcon icon={faEyeSlash} show/> : <FaIcon icon={faEye} show/>}
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                     {
@@ -225,7 +229,7 @@ const ChatBubble: ({text, type}: { text: string, type: string }) => JSX.Element 
                     <div
                         css={tw`p-2 inline-block max-w-sm sm:max-w-md lg:max-w-xl xl:max-w-5xl`}>
                         <div css={tw`break-words flex flex-row gap-2`}>
-                            <span css={tw`my-auto`}>
+                            <span css={tw`my-auto w-4 pt-1`}>
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
                             </span>
                             <Twemoji options={{"size": "1.5rem"}}>

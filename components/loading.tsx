@@ -30,7 +30,7 @@ const Dot = styled.div`
   width: 0.7rem;
   height: 0.7rem;
   margin: 0 0.25rem;
-  ${tw`bg-black dark:bg-white`}
+  ${tw`bg-gray-600 dark:bg-white`}
   animation: ${BounceAnimation} 1.2s ease-in-out infinite;
   animation-delay: ${(props: {delay: string}) => props.delay};
 `
