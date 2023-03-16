@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import Twemoji from 'react-twemoji';
-import {css, keyframes} from "styled-components";
+import {css} from "styled-components";
 import Head from "next/head";
 import Loading from "../components/loading";
 import Link from "next/link";
@@ -30,12 +30,15 @@ const SearchGPT: NextPage = () => {
     const {sendMessage, lastMessage, readyState} = useWebSocket("wss://searchgptapi.perrysahnow.com", {
         shouldReconnect: () => false,
     });
+    const [tokensUsed, setTokensUsed] = useState<number>(0);
+    const [selectedModel, setSelectedModel] = useState<string>("gpt-3.5-turbo");
     const [messages, setMessages] = useState<({ "type": "user" | "assistant" | "error" | "search", "message": string })[]>([
         // {"type": "Search", "message": "Test Message"},
         // {"type": "error", "message": "Test Message"},
         // {"type": "assistant", "message": "Test Message"},
         // {"type": "user", "message": "Test Message"},
     ]);
+    const [models, setModels] = useState<string[]>(["gpt-3.5-turbo"]);
     const [showApiKey, setShowApiKey] = useState(false);
 
     const sendInput = () => {
@@ -75,6 +78,12 @@ const SearchGPT: NextPage = () => {
     }, [dark])
 
     useEffect(() => {
+        if (connectionStatus === "Open") {
+            sendMessage(JSON.stringify({"type": "model", "model": selectedModel}))
+        }
+    }, [selectedModel])
+
+    useEffect(() => {
         const apiKey = localStorage.getItem("apiKey");
         if (apiKey !== null) {
             setApiKey(apiKey);
@@ -101,6 +110,13 @@ const SearchGPT: NextPage = () => {
                 setLoading(false)
             } else if (data.type === "Search") {
                 setMessages([{"type": "search", "message": data.search}, ...messages]);
+            } else if (data.type === "models") {
+                setModels(data.models)
+            } else if (data.type === "usedTokens") {
+                setTokensUsed(data.value + tokensUsed)
+            }
+            else {
+                console.log(data)
             }
         }
     }, [lastMessage]);
@@ -121,6 +137,21 @@ const SearchGPT: NextPage = () => {
                         {"Status: "}
                         <div
                             css={{...tw`p-3 w-min h-min my-auto rounded-full shadow-sm`, ...(connectionStatus === "Open" ? tw`bg-green-400` : connectionStatus === "Connecting" ? tw`bg-orange-400` : tw`bg-red-400`)}}/>
+                    </div>
+                    <div css={tw`flex flex-col gap-3 mx-auto sm:flex-row`}>
+                        <div>
+                            Model:
+                            <select css={tw`h-8 rounded-full flex-grow flex-shrink focus:outline-none px-3 mt-2 shadow-md min-w-0 bg-white dark:bg-slate-600 ml-1 sm:ml-2 md:ml-4`} value={selectedModel} onChange={(e) => {
+                                setSelectedModel(e.target.value)
+                            }}>
+                                {models.sort().map((model) => {
+                                    return <option key={model} value={model}>{model}</option>
+                                })}
+                            </select>
+                        </div>
+                        <div css={tw`sm:mt-3 mx-auto sm:mx-0`}>
+                            Tokens Used: {tokensUsed}
+                        </div>
                     </div>
                     <div css={tw`w-full sm:px-4 md:px-8 flex flex-row pb-2 justify-center sm:mt-3`}>
                         <div css={css`
