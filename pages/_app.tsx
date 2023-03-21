@@ -3,7 +3,7 @@ import GlobalStyles from '../styles/GlobalStyles'
 import React from "react";
 import Head from "next/head";
 
-function MyApp({Component, pageProps}: AppProps) {
+function SearchGPTWrapper({Component, pageProps}: AppProps) {
     return (
         <>
             <Head>
@@ -12,13 +12,23 @@ function MyApp({Component, pageProps}: AppProps) {
                 <meta name="mobile-web-app-capable" content="yes"/>
                 <meta name="theme-color" content="#1E293B"/>
                 <meta property="og:url" content="https://searchgpt.perrysahnow.com/"/>
-                <link rel="manifest" href="/manifest.json" />
-                <link rel="shortcut icon" href="/images/icons/icon-512x512.png" />
+                <link rel="manifest" href="/manifest.json"/>
+                <link rel="shortcut icon" href="/images/icons/icon-512x512.png"/>
             </Head>
             <GlobalStyles/>
+            <ColorMode/>
             <Component {...pageProps} />
         </>
     )
 }
 
-export default MyApp
+function ColorMode() {
+    const code = `
+    (() => {
+        const dark = localStorage.getItem("dark") ;
+        document.body.className = (dark ? (dark === "true") : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? "dark" : ""
+    })()`
+    return <script dangerouslySetInnerHTML={{__html: code}}/>
+}
+
+export default SearchGPTWrapper
