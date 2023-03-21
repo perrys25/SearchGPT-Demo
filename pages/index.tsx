@@ -38,8 +38,16 @@ const SearchGPT: NextPage = () => {
         // {"type": "assistant", "message": "Test Message"},
         // {"type": "user", "message": "Test Message"},
     ]);
-    const [models, setModels] = useState<string[]>(["gpt-3.5-turbo"]);
+    const [models, setModels] = useState<string[]>(["None"]);
     const [showApiKey, setShowApiKey] = useState(false);
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
 
     const sendInput = () => {
         if (input !== "") {
@@ -54,14 +62,6 @@ const SearchGPT: NextPage = () => {
             }
         }
     }
-
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
-        [ReadyState.OPEN]: 'Open',
-        [ReadyState.CLOSING]: 'Closing',
-        [ReadyState.CLOSED]: 'Closed',
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
 
     useEffect(() => {
         if (apiKey === undefined) return
@@ -106,12 +106,18 @@ const SearchGPT: NextPage = () => {
                 setMessages([{"type": "assistant", "message": data.message}, ...messages]);
                 setLoading(false)
             } else if (data.type === "error") {
-                setMessages([{"type": "error", "message": data.error}, ...messages]);
+                if (data.error === "Invalid API Key") {
+                    setModels(["None"])
+                    setSelectedModel("None")
+                } else {
+                    setMessages([{"type": "error", "message": data.error}, ...messages]);
+                }
                 setLoading(false)
             } else if (data.type === "Search") {
                 setMessages([{"type": "search", "message": data.search}, ...messages]);
             } else if (data.type === "models") {
-                setModels(data.models)
+                setModels(data.models && data.models.length >  0 ? data.models : ["None"])
+                setSelectedModel(data.models.sort()[0])
             } else if (data.type === "usedTokens") {
                 setTokensUsed(data.value + tokensUsed)
             }
@@ -200,8 +206,8 @@ const SearchGPT: NextPage = () => {
                                               onChange={v => {
                                                   setInput(v.target.value)
                                               }}
-                                              readOnly={connectionStatus !== "Open"}
-                                              placeholder={connectionStatus === "Open" ? "Ask me a question..." : "Not connected. Try reloading, or check your internet connection."}
+                                              readOnly={connectionStatus !== "Open" || models[0] === "None"}
+                                              placeholder={connectionStatus === "Open" ? (models[0] === "None" ? "Invalid API Key" :  "Ask me a question...") : "Not connected. Try reloading, or check your internet connection."}
                                               css={tw`rounded-lg p-2 w-full resize-none focus:outline-none bg-white dark:bg-slate-600 shadow-lg`}
                                               onKeyDown={event => {
                                                   const key = event.key
